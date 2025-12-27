@@ -1,0 +1,1498 @@
+<!doctype html>
+<html lang="id" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form IKU Dashboard</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      height: 100%;
+      overflow: auto;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    .dashboard-wrapper {
+      min-height: 100%;
+      width: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .sidebar {
+      background: #ffffff;
+      min-height: 100%;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      padding: 25px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-align: center;
+    }
+
+    .sidebar-header h4 {
+      margin: 0;
+      font-weight: 600;
+      font-size: 22px;
+    }
+
+    .profile-section {
+      padding: 30px 20px;
+      text-align: center;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .profile-image {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 15px;
+      font-size: 40px;
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .profile-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 5px;
+    }
+
+    .profile-role {
+      font-size: 14px;
+      color: #718096;
+      margin-bottom: 0;
+    }
+
+    .nav-menu {
+      padding: 20px 15px;
+    }
+
+    .nav-item {
+      padding: 14px 20px;
+      margin: 8px 0;
+      color: #4a5568;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+      font-weight: 500;
+    }
+
+    .nav-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 4px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      transform: scaleY(0);
+      transition: transform 0.3s ease;
+    }
+
+    .nav-item:hover {
+      background: linear-gradient(90deg, rgba(102, 126, 234, 0.08) 0%, transparent 100%);
+      color: #667eea;
+      transform: translateX(5px);
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+    }
+
+    .nav-item:hover::before {
+      transform: scaleY(1);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(90deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.05) 100%);
+      color: #667eea;
+      font-weight: 600;
+      box-shadow: 0 2px 12px rgba(102, 126, 234, 0.15);
+    }
+
+    .nav-item.active::before {
+      transform: scaleY(1);
+    }
+
+    .nav-item i {
+      margin-right: 15px;
+      font-size: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .nav-item:hover i {
+      transform: scale(1.1);
+    }
+
+    .nav-item-badge {
+      margin-left: auto;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+
+    .logout-section {
+      padding: 15px;
+      border-top: 1px solid #e9ecef;
+      margin-top: auto;
+    }
+
+    .logout-btn {
+      width: 100%;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(245, 101, 101, 0.2);
+    }
+
+    .logout-btn:hover {
+      background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(245, 101, 101, 0.3);
+    }
+
+    .logout-btn:active {
+      transform: translateY(0);
+    }
+
+    .logout-btn i {
+      margin-right: 10px;
+      font-size: 18px;
+    }
+
+    .main-content {
+      padding: 30px;
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    .content-header {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      margin-bottom: 25px;
+    }
+
+    .content-header h2 {
+      margin: 0;
+      color: #2d3748;
+      font-size: 28px;
+      font-weight: 600;
+    }
+
+    .form-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      padding: 20px;
+      min-height: 600px;
+    }
+
+    .form-embed {
+      width: 100%;
+      height: 800px;
+      border: none;
+      border-radius: 8px;
+    }
+
+    .no-form-message {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 600px;
+      color: #718096;
+      text-align: center;
+    }
+
+    .no-form-message i {
+      font-size: 80px;
+      color: #cbd5e0;
+      margin-bottom: 20px;
+    }
+
+    .no-form-message h4 {
+      color: #4a5568;
+      margin-bottom: 10px;
+    }
+
+    .no-form-message p {
+      color: #a0aec0;
+    }
+
+    .mobile-menu-toggle {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      color: white;
+      border: none;
+      font-size: 24px;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+      z-index: 1000;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .mobile-menu-toggle:hover {
+      transform: scale(1.1);
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        left: -100%;
+        top: 0;
+        width: 280px;
+        height: 100%;
+        z-index: 999;
+        transition: left 0.3s ease;
+        box-shadow: 2px 0 20px rgba(0,0,0,0.2);
+      }
+      
+      .sidebar.active {
+        left: 0;
+      }
+
+      .mobile-menu-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .mobile-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 998;
+      }
+
+      .mobile-overlay.active {
+        display: block;
+      }
+      
+      .main-content {
+        padding: 15px;
+      }
+
+      .content-header h2 {
+        font-size: 22px;
+      }
+
+      .profile-section {
+        padding: 20px 15px;
+      }
+
+      .profile-image {
+        width: 80px;
+        height: 80px;
+        font-size: 32px;
+      }
+
+      .nav-menu {
+        padding: 15px 10px;
+      }
+
+      .nav-item {
+        padding: 12px 15px;
+        margin: 6px 0;
+      }
+
+      .nav-item i {
+        font-size: 18px;
+        margin-right: 12px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .verification-card {
+        padding: 40px 25px;
+      }
+
+      .form-embed {
+        height: 600px;
+      }
+    }
+
+    /* Verification Screen Styles */
+    .verification-card {
+      background: white;
+      padding: 50px 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+
+    .verification-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 25px;
+      font-size: 36px;
+      color: white;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .verification-title {
+      font-size: 28px;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 10px;
+    }
+
+    .verification-subtitle {
+      color: #718096;
+      margin-bottom: 30px;
+      font-size: 16px;
+    }
+
+    .verification-form {
+      text-align: left;
+    }
+
+    .form-label {
+      font-weight: 500;
+      color: #4a5568;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .verification-input {
+      padding: 12px 16px;
+      font-size: 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      text-align: center;
+      letter-spacing: 2px;
+      font-weight: 600;
+    }
+
+    .verification-input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      outline: none;
+    }
+
+    .verification-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .verification-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .verification-btn:active {
+      transform: translateY(0);
+    }
+
+    .verification-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .error-message {
+      background: #fed7d7;
+      color: #c53030;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      animation: shake 0.5s;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    @media (max-width: 576px) {
+      .verification-card {
+        padding: 40px 30px;
+      }
+    }
+
+    /* Profile Page Styles */
+    .page-content {
+      width: 100%;
+    }
+
+    .profile-photo-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .profile-photo-preview {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 80px;
+      color: white;
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .profile-photo-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .btn-upload-photo, .btn-remove-photo {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-upload-photo:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-remove-photo {
+      background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+    }
+
+    .btn-remove-photo:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(245, 101, 101, 0.4);
+    }
+
+    .form-label-profile {
+      font-weight: 600;
+      color: #4a5568;
+      margin-bottom: 8px;
+      display: block;
+      font-size: 14px;
+    }
+
+    .form-control-profile {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 15px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      color: #2d3748;
+    }
+
+    .form-control-profile:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      outline: none;
+    }
+
+    .profile-form-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .btn-save-profile, .btn-cancel-profile {
+      flex: 1;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-save-profile {
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+      color: white;
+    }
+
+    .btn-save-profile:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(72, 187, 120, 0.4);
+    }
+
+    .btn-cancel-profile {
+      background: #e2e8f0;
+      color: #4a5568;
+    }
+
+    .btn-cancel-profile:hover {
+      background: #cbd5e0;
+      transform: translateY(-2px);
+    }
+
+    .success-message {
+      background: #c6f6d5;
+      color: #22543d;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .profile-photo-preview {
+        width: 150px;
+        height: 150px;
+        font-size: 60px;
+      }
+
+      .profile-form-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <main class="h-full"><!-- Verification Screen -->
+   <div id="verification-screen" class="dashboard-wrapper" style="display: flex;">
+    <div class="container">
+     <div class="row justify-content-center align-items-center" style="min-height: 100vh;">
+      <div class="col-md-5">
+       <div class="verification-card">
+        <div class="verification-icon"><i class="bi bi-shield-lock"></i>
+        </div>
+        <h2 class="verification-title">Verifikasi Akses</h2>
+        <p class="verification-subtitle">Masukkan kode akses untuk melanjutkan</p>
+        <form id="verification-form" class="verification-form">
+         <div class="form-group"><label for="access-code" class="form-label">Kode Akses</label> <input type="text" id="access-code" class="form-control verification-input" placeholder="Masukkan kode" maxlength="6" required>
+         </div>
+         <div id="error-message" class="error-message" style="display: none;"><i class="bi bi-exclamation-circle"></i> <span>Kode akses salah. Silakan coba lagi.</span>
+         </div><button type="submit" class="btn verification-btn" id="verify-btn"> <span id="btn-text">Verifikasi</span> <span id="btn-loading" style="display: none;"> <span class="spinner-border spinner-border-sm me-2"></span> Memverifikasi... </span> </button>
+        </form>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div><!-- Dashboard Screen -->
+   <div id="dashboard-screen" class="dashboard-wrapper" style="display: none;">
+    <div class="mobile-overlay" id="mobile-overlay"></div><button class="mobile-menu-toggle" id="mobile-menu-toggle"> <i class="bi bi-list"></i> </button>
+    <div class="container-fluid h-full">
+     <div class="row h-full"><!-- Sidebar -->
+      <div class="col-lg-3 col-md-4 p-0">
+       <div class="sidebar">
+        <div class="sidebar-header">
+         <h4 id="dashboard-title">Form IKU</h4>
+        </div>
+        <div class="profile-section">
+         <div class="profile-image"><i class="bi bi-person-circle"></i>
+         </div>
+         <div class="profile-name" id="profile-name">
+          Nama Program Studi
+         </div>
+         <div class="profile-role" id="profile-role">
+          Jabatan
+         </div>
+        </div>
+        <nav class="nav-menu"><a class="nav-item active" data-page="form-iku"> <i class="bi bi-file-earmark-text"></i> <span>Form IKU</span> <span class="nav-item-badge">Aktif</span> </a> <a class="nav-item" data-page="dashboard"> <i class="bi bi-bar-chart-line"></i> <span>Dashboard</span> </a> <a class="nav-item" data-page="laporan"> <i class="bi bi-clipboard-data"></i> <span>Laporan</span> </a> <a class="nav-item" data-page="profil"> <i class="bi bi-person"></i> <span>Profil</span> </a> <a class="nav-item" data-page="pengaturan"> <i class="bi bi-gear"></i> <span>Pengaturan</span> </a>
+        </nav>
+        <div class="logout-section"><button class="logout-btn" id="logout-btn"> <i class="bi bi-box-arrow-right"></i> <span>Keluar</span> </button>
+        </div>
+       </div>
+      </div><!-- Main Content -->
+      <div class="col-lg-9 col-md-8">
+       <div class="main-content"><!-- Form IKU Page -->
+        <div id="page-form-iku" class="page-content">
+         <div class="content-header">
+          <h2>Formulir Indikator Kinerja Utama (IKU)</h2>
+         </div>
+         <div class="form-container">
+          <div id="form-content">
+           <div> <iframe style="border:1px #FFFFFF none" src="https://docs.google.com/forms/d/e/1FAIpQLSd_cZw8K0eE9JsruKpB8NszoaR5U1OmUK9cxQRSso_aHbOt4Q/viewform" title="iFrame" width="100%" height="600px" scrolling="yes" frameborder="no" allow="fullscreen"></iframe>
+           </div>
+          </div>
+         </div>
+        </div><!-- Laporan Page -->
+        <div id="page-laporan" class="page-content" style="display: none;">
+         <div class="content-header">
+          <h2>Laporan Status Pengisian Form</h2>
+         </div>
+         <div class="form-container">
+          <div class="row mb-4">
+           <div class="col-md-6 mb-3">
+            <div style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); padding: 25px; border-radius: 12px; color: white; box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);">
+             <div style="display: flex; align-items: center; gap: 15px;">
+              <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px;"><i class="bi bi-check-circle-fill"></i>
+              </div>
+              <div>
+               <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">
+                Sudah Mengisi
+               </div>
+               <div style="font-size: 32px; font-weight: 700;" id="count-completed">
+                0
+               </div>
+              </div>
+             </div>
+            </div>
+           </div>
+           <div class="col-md-6 mb-3">
+            <div style="background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%); padding: 25px; border-radius: 12px; color: white; box-shadow: 0 4px 15px rgba(245, 101, 101, 0.3);">
+             <div style="display: flex; align-items: center; gap: 15px;">
+              <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px;"><i class="bi bi-x-circle-fill"></i>
+              </div>
+              <div>
+               <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">
+                Belum Mengisi
+               </div>
+               <div style="font-size: 32px; font-weight: 700;" id="count-pending">
+                0
+               </div>
+              </div>
+             </div>
+            </div>
+           </div>
+          </div>
+          <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+           <div style="padding: 20px; border-bottom: 2px solid #e2e8f0; background: #f7fafc;">
+            <h5 style="margin: 0; color: #2d3748; font-weight: 600; display: flex; align-items: center; gap: 10px;"><i class="bi bi-table"></i> Daftar Status Pengisian</h5>
+           </div>
+           <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+             <thead>
+              <tr style="background: #f7fafc; border-bottom: 2px solid #e2e8f0;">
+               <th style="padding: 15px 20px; text-align: left; font-weight: 600; color: #4a5568; font-size: 14px;">No</th>
+               <th style="padding: 15px 20px; text-align: left; font-weight: 600; color: #4a5568; font-size: 14px;">Nama</th>
+               <th style="padding: 15px 20px; text-align: left; font-weight: 600; color: #4a5568; font-size: 14px;">Jabatan</th>
+               <th style="padding: 15px 20px; text-align: center; font-weight: 600; color: #4a5568; font-size: 14px;">Status</th>
+               <th style="padding: 15px 20px; text-align: left; font-weight: 600; color: #4a5568; font-size: 14px;">Tanggal Pengisian</th>
+               <th style="padding: 15px 20px; text-align: center; font-weight: 600; color: #4a5568; font-size: 14px;">Aksi</th>
+              </tr>
+             </thead>
+             <tbody id="laporan-table-body">
+              <tr>
+               <td colspan="6" style="padding: 40px; text-align: center; color: #a0aec0;"><i class="bi bi-inbox" style="font-size: 48px; display: block; margin-bottom: 15px; opacity: 0.5;"></i>
+                <div style="font-size: 16px;">
+                 Belum ada data laporan
+                </div></td>
+              </tr>
+             </tbody>
+            </table>
+           </div>
+          </div>
+          <div style="margin-top: 20px; padding: 20px; background: #fffaf0; border-left: 4px solid #ed8936; border-radius: 8px;">
+           <div style="display: flex; gap: 12px; align-items: start;"><i class="bi bi-info-circle-fill" style="color: #ed8936; font-size: 20px; margin-top: 2px;"></i>
+            <div style="color: #744210; font-size: 14px; line-height: 1.6;"><strong>Catatan:</strong> Data ini adalah contoh. Untuk menampilkan data pengisian form yang sebenarnya, Anda perlu mengintegrasikan dengan Google Sheets API atau menggunakan sistem backend untuk melacak respons form.
+            </div>
+           </div>
+          </div>
+         </div>
+        </div><!-- Profile Page -->
+        <div id="page-profil" class="page-content" style="display: none;">
+         <div class="content-header">
+          <h2>Edit Profil</h2>
+         </div>
+         <div class="form-container">
+          <form id="profile-form">
+           <div class="row">
+            <div class="col-md-4 text-center mb-4">
+             <div class="profile-photo-container">
+              <div class="profile-photo-preview" id="profile-photo-preview"><i class="bi bi-person-circle"></i>
+              </div><input type="file" id="profile-photo-input" accept="image/*" style="display: none;"> <button type="button" class="btn-upload-photo" id="upload-photo-btn"> <i class="bi bi-camera"></i> Ubah Foto </button> <button type="button" class="btn-remove-photo" id="remove-photo-btn" style="display: none;"> <i class="bi bi-trash"></i> Hapus Foto </button>
+             </div>
+            </div>
+            <div class="col-md-8">
+             <div class="mb-3"><label for="edit-nama-prodi" class="form-label-profile">Nama Program Studi</label> <input type="text" class="form-control-profile" id="edit-nama-prodi" placeholder="Contoh: Teknik Informatika">
+             </div>
+             <div class="mb-3"><label for="edit-jabatan" class="form-label-profile">Jabatan</label> <input type="text" class="form-control-profile" id="edit-jabatan" placeholder="Contoh: Ketua Program Studi">
+             </div>
+             <div class="mb-3"><label for="edit-email" class="form-label-profile">Email</label> <input type="email" class="form-control-profile" id="edit-email" placeholder="email@universitas.ac.id">
+             </div>
+             <div class="mb-3"><label for="edit-telepon" class="form-label-profile">Nomor Telepon</label> <input type="tel" class="form-control-profile" id="edit-telepon" placeholder="08xxxxxxxxxx">
+             </div>
+             <div class="profile-form-actions"><button type="submit" class="btn-save-profile"> <i class="bi bi-check-circle"></i> Simpan Perubahan </button> <button type="button" class="btn-cancel-profile" id="cancel-profile-btn"> <i class="bi bi-x-circle"></i> Batal </button>
+             </div>
+             <div id="profile-success-message" class="success-message" style="display: none;"><i class="bi bi-check-circle-fill"></i> <span>Profil berhasil diperbarui!</span>
+             </div>
+            </div>
+           </div>
+          </form>
+         </div>
+        </div><!-- Pengaturan Page -->
+        <div id="page-pengaturan" class="page-content" style="display: none;">
+         <div class="content-header">
+          <h2>Pengaturan Keamanan</h2>
+         </div>
+         <div class="form-container">
+          <div style="max-width: 600px; margin: 0 auto;">
+           <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 12px; color: white; margin-bottom: 30px; text-align: center;"><i class="bi bi-shield-lock-fill" style="font-size: 48px; margin-bottom: 15px; display: block;"></i>
+            <h4 style="margin: 0 0 8px 0; font-weight: 600;">Ubah Kode Akses</h4>
+            <p style="margin: 0; opacity: 0.9; font-size: 14px;">Pastikan kode akses Anda aman dan mudah diingat</p>
+           </div>
+           <form id="change-code-form">
+            <div class="mb-4"><label for="current-code" class="form-label-profile">Kode Akses Saat Ini</label> <input type="password" class="form-control-profile" id="current-code" placeholder="Masukkan kode akses saat ini" maxlength="6" required style="text-align: center; letter-spacing: 4px; font-weight: 600; font-size: 18px;">
+            </div>
+            <div class="mb-4"><label for="new-code" class="form-label-profile">Kode Akses Baru</label> <input type="password" class="form-control-profile" id="new-code" placeholder="Masukkan kode akses baru (6 digit)" maxlength="6" required style="text-align: center; letter-spacing: 4px; font-weight: 600; font-size: 18px;">
+             <div style="margin-top: 8px; font-size: 13px; color: #718096;"><i class="bi bi-info-circle"></i> Gunakan 6 digit angka atau huruf
+             </div>
+            </div>
+            <div class="mb-4"><label for="confirm-code" class="form-label-profile">Konfirmasi Kode Akses Baru</label> <input type="password" class="form-control-profile" id="confirm-code" placeholder="Ulangi kode akses baru" maxlength="6" required style="text-align: center; letter-spacing: 4px; font-weight: 600; font-size: 18px;">
+            </div>
+            <div id="code-error-message" class="error-message" style="display: none;"><i class="bi bi-exclamation-circle"></i> <span id="code-error-text">Terjadi kesalahan</span>
+            </div>
+            <div id="code-success-message" class="success-message" style="display: none;"><i class="bi bi-check-circle-fill"></i> <span>Kode akses berhasil diubah!</span>
+            </div>
+            <div class="profile-form-actions" style="margin-top: 30px;"><button type="submit" class="btn-save-profile"> <i class="bi bi-shield-check"></i> Ubah Kode Akses </button> <button type="button" class="btn-cancel-profile" id="cancel-code-btn"> <i class="bi bi-x-circle"></i> Batal </button>
+            </div>
+           </form>
+           <div style="margin-top: 30px; padding: 20px; background: #fffaf0; border-left: 4px solid #ed8936; border-radius: 8px;">
+            <div style="display: flex; gap: 12px; align-items: start;"><i class="bi bi-lightbulb-fill" style="color: #ed8936; font-size: 20px; margin-top: 2px;"></i>
+             <div style="color: #744210; font-size: 13px; line-height: 1.6;"><strong>Tips Keamanan:</strong>
+              <ul style="margin: 8px 0 0 0; padding-left: 20px;">
+               <li>Gunakan kombinasi angka yang unik</li>
+               <li>Jangan gunakan tanggal lahir atau nomor telepon</li>
+               <li>Ubah kode secara berkala untuk keamanan</li>
+               <li>Jangan bagikan kode kepada orang lain</li>
+              </ul>
+             </div>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </main>
+  <script>
+    const defaultConfig = {
+      dashboard_title: "Form IKU",
+      nama_prodi: "Nama Program Studi",
+      jabatan: "Jabatan",
+      email: "",
+      telepon: "",
+      profile_photo: null,
+      google_form_url: "https://docs.google.com/forms/d/e/1FAIpQLSd_cZw8K0eE9JsruKpB8NszoaR5U1OmUK9cxQRSso_aHbOt4Q/viewform",
+      primary_color: "#667eea",
+      secondary_color: "#764ba2",
+      background_color: "#ffffff",
+      text_color: "#2d3748",
+      accent_color: "#f7fafc",
+      font_family: "Segoe UI",
+      font_size: 16
+    };
+
+    async function onConfigChange(config) {
+      const dashboardTitle = config.dashboard_title || defaultConfig.dashboard_title;
+      const namaProdi = config.nama_prodi || defaultConfig.nama_prodi;
+      const jabatan = config.jabatan || defaultConfig.jabatan;
+      const googleFormUrl = config.google_form_url || defaultConfig.google_form_url;
+      const primaryColor = config.primary_color || defaultConfig.primary_color;
+      const secondaryColor = config.secondary_color || defaultConfig.secondary_color;
+      const backgroundColor = config.background_color || defaultConfig.background_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const accentColor = config.accent_color || defaultConfig.accent_color;
+      const fontFamily = config.font_family || defaultConfig.font_family;
+      const fontSize = config.font_size || defaultConfig.font_size;
+
+      // Update text content
+      document.getElementById('dashboard-title').textContent = dashboardTitle;
+      document.getElementById('profile-name').textContent = namaProdi;
+      document.getElementById('profile-role').textContent = jabatan;
+
+      // Update profile photo in sidebar
+      const profilePhoto = config.profile_photo || defaultConfig.profile_photo;
+      const sidebarProfileImage = document.querySelector('.profile-image');
+      if (profilePhoto) {
+        sidebarProfileImage.innerHTML = `<img src="${profilePhoto}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+      } else {
+        sidebarProfileImage.innerHTML = '<i class="bi bi-person-circle"></i>';
+      }
+
+      // Update Google Form
+      const formContent = document.getElementById('form-content');
+      if (googleFormUrl && googleFormUrl.trim() !== '') {
+        let embedUrl = googleFormUrl;
+        
+        // Convert short URL to full URL first
+        if (googleFormUrl.includes('forms.gle/')) {
+          // For short URLs, we need to use the full form URL
+          const formId = googleFormUrl.split('forms.gle/')[1].split('?')[0];
+          embedUrl = `https://docs.google.com/forms/d/e/${formId}/viewform?embedded=true`;
+        } else if (googleFormUrl.includes('docs.google.com/forms')) {
+          // For full URLs, add embedded parameter
+          if (googleFormUrl.includes('/viewform')) {
+            if (!googleFormUrl.includes('embedded=true')) {
+              embedUrl = googleFormUrl + (googleFormUrl.includes('?') ? '&' : '?') + 'embedded=true';
+            }
+          }
+        }
+        
+        formContent.innerHTML = `<iframe src="${embedUrl}" class="form-embed" frameborder="0" marginheight="0" marginwidth="0">Memuat…</iframe>`;
+      } else {
+        formContent.innerHTML = `
+          <div class="no-form-message">
+            <i class="bi bi-file-earmark-text"></i>
+            <h4>Belum Ada Google Form</h4>
+            <p>Silakan masukkan URL Google Form melalui panel edit</p>
+          </div>
+        `;
+      }
+
+      // Update colors
+      const dashboardWrapper = document.querySelector('.dashboard-wrapper');
+      dashboardWrapper.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`;
+
+      const sidebarHeader = document.querySelector('.sidebar-header');
+      sidebarHeader.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`;
+
+      const sidebar = document.querySelector('.sidebar');
+      sidebar.style.background = backgroundColor;
+
+      const profileImage = document.querySelector('.profile-image');
+      profileImage.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`;
+
+      const profileName = document.querySelector('.profile-name');
+      profileName.style.color = textColor;
+
+      const contentHeader = document.querySelector('.content-header h2');
+      contentHeader.style.color = textColor;
+
+      const navItems = document.querySelectorAll('.nav-item');
+      navItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+          if (!this.classList.contains('active')) {
+            this.style.backgroundColor = accentColor;
+            this.style.color = primaryColor;
+          }
+        });
+        item.addEventListener('mouseleave', function() {
+          if (!this.classList.contains('active')) {
+            this.style.backgroundColor = '';
+            this.style.color = '';
+          }
+        });
+      });
+
+      const activeNavItem = document.querySelector('.nav-item.active');
+      if (activeNavItem) {
+        activeNavItem.style.borderLeftColor = primaryColor;
+        activeNavItem.style.color = primaryColor;
+      }
+
+      // Update font
+      const baseFontStack = 'Tahoma, Geneva, Verdana, sans-serif';
+      document.body.style.fontFamily = `${fontFamily}, ${baseFontStack}`;
+      
+      // Update font sizes
+      document.getElementById('dashboard-title').style.fontSize = `${fontSize * 1.375}px`;
+      document.querySelector('.profile-name').style.fontSize = `${fontSize * 1.125}px`;
+      document.querySelector('.profile-role').style.fontSize = `${fontSize * 0.875}px`;
+      document.querySelector('.content-header h2').style.fontSize = `${fontSize * 1.75}px`;
+      
+      navItems.forEach(item => {
+        item.style.fontSize = `${fontSize}px`;
+      });
+    }
+
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [
+          {
+            get: () => config.primary_color || defaultConfig.primary_color,
+            set: (value) => {
+              config.primary_color = value;
+              window.elementSdk.setConfig({ primary_color: value });
+            }
+          },
+          {
+            get: () => config.secondary_color || defaultConfig.secondary_color,
+            set: (value) => {
+              config.secondary_color = value;
+              window.elementSdk.setConfig({ secondary_color: value });
+            }
+          },
+          {
+            get: () => config.background_color || defaultConfig.background_color,
+            set: (value) => {
+              config.background_color = value;
+              window.elementSdk.setConfig({ background_color: value });
+            }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (value) => {
+              config.text_color = value;
+              window.elementSdk.setConfig({ text_color: value });
+            }
+          },
+          {
+            get: () => config.accent_color || defaultConfig.accent_color,
+            set: (value) => {
+              config.accent_color = value;
+              window.elementSdk.setConfig({ accent_color: value });
+            }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => config.font_family || defaultConfig.font_family,
+          set: (value) => {
+            config.font_family = value;
+            window.elementSdk.setConfig({ font_family: value });
+          }
+        },
+        fontSizeable: {
+          get: () => config.font_size || defaultConfig.font_size,
+          set: (value) => {
+            config.font_size = value;
+            window.elementSdk.setConfig({ font_size: value });
+          }
+        }
+      };
+    }
+
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ["dashboard_title", config.dashboard_title || defaultConfig.dashboard_title],
+        ["nama_prodi", config.nama_prodi || defaultConfig.nama_prodi],
+        ["jabatan", config.jabatan || defaultConfig.jabatan],
+        ["google_form_url", config.google_form_url || defaultConfig.google_form_url]
+      ]);
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+    }
+
+    // Verification Logic
+    let CORRECT_CODE = '071055';
+    const verificationForm = document.getElementById('verification-form');
+    const accessCodeInput = document.getElementById('access-code');
+    const errorMessage = document.getElementById('error-message');
+    const verifyBtn = document.getElementById('verify-btn');
+    const btnText = document.getElementById('btn-text');
+    const btnLoading = document.getElementById('btn-loading');
+    const verificationScreen = document.getElementById('verification-screen');
+    const dashboardScreen = document.getElementById('dashboard-screen');
+
+    verificationForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const enteredCode = accessCodeInput.value.trim();
+      
+      // Show loading state
+      verifyBtn.disabled = true;
+      btnText.style.display = 'none';
+      btnLoading.style.display = 'inline-block';
+      errorMessage.style.display = 'none';
+
+      // Simulate verification delay
+      setTimeout(() => {
+        if (enteredCode === CORRECT_CODE) {
+          // Success - show dashboard
+          verificationScreen.style.display = 'none';
+          dashboardScreen.style.display = 'block';
+        } else {
+          // Error - show error message
+          errorMessage.style.display = 'flex';
+          accessCodeInput.value = '';
+          accessCodeInput.focus();
+          
+          // Reset button state
+          verifyBtn.disabled = false;
+          btnText.style.display = 'inline';
+          btnLoading.style.display = 'none';
+        }
+      }, 800);
+    });
+
+    // Auto-focus on input
+    accessCodeInput.focus();
+
+    // Mobile menu toggle
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const mobileOverlay = document.getElementById('mobile-overlay');
+    const sidebar = document.querySelector('.sidebar');
+
+    if (mobileMenuToggle) {
+      mobileMenuToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('active');
+        mobileOverlay.classList.toggle('active');
+      });
+
+      mobileOverlay.addEventListener('click', function() {
+        sidebar.classList.remove('active');
+        mobileOverlay.classList.remove('active');
+      });
+
+      // Close menu when clicking a nav item
+      const navItems = document.querySelectorAll('.nav-item');
+      navItems.forEach(item => {
+        item.addEventListener('click', function() {
+          if (window.innerWidth <= 768) {
+            sidebar.classList.remove('active');
+            mobileOverlay.classList.remove('active');
+          }
+        });
+      });
+    }
+
+    // Logout functionality
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', function() {
+        // Close mobile menu if open
+        if (sidebar.classList.contains('active')) {
+          sidebar.classList.remove('active');
+          mobileOverlay.classList.remove('active');
+        }
+
+        // Show verification screen, hide dashboard
+        dashboardScreen.style.display = 'none';
+        verificationScreen.style.display = 'flex';
+        
+        // Reset verification form
+        accessCodeInput.value = '';
+        errorMessage.style.display = 'none';
+        verifyBtn.disabled = false;
+        btnText.style.display = 'inline';
+        btnLoading.style.display = 'none';
+        
+        // Focus on input after a short delay
+        setTimeout(() => {
+          accessCodeInput.focus();
+        }, 300);
+      });
+    }
+
+    // Page Navigation
+    const navMenuItems = document.querySelectorAll('.nav-item[data-page]');
+    const pageContents = document.querySelectorAll('.page-content');
+
+    navMenuItems.forEach(item => {
+      item.addEventListener('click', function() {
+        const targetPage = this.getAttribute('data-page');
+        
+        // Update active menu
+        navMenuItems.forEach(nav => {
+          nav.classList.remove('active');
+          const badge = nav.querySelector('.nav-item-badge');
+          if (badge) badge.style.display = 'none';
+        });
+        this.classList.add('active');
+        
+        // Add active badge
+        let badge = this.querySelector('.nav-item-badge');
+        if (!badge) {
+          badge = document.createElement('span');
+          badge.className = 'nav-item-badge';
+          badge.textContent = 'Aktif';
+          this.appendChild(badge);
+        }
+        badge.style.display = 'inline-block';
+        
+        // Show target page
+        pageContents.forEach(page => {
+          page.style.display = 'none';
+        });
+        const targetPageElement = document.getElementById('page-' + targetPage);
+        if (targetPageElement) {
+          targetPageElement.style.display = 'block';
+        }
+
+        // Close mobile menu
+        if (window.innerWidth <= 768) {
+          sidebar.classList.remove('active');
+          mobileOverlay.classList.remove('active');
+        }
+      });
+    });
+
+    // Profile Page Functionality
+    let profilePhotoData = null;
+
+    // Load profile data from config
+    function loadProfileData() {
+      const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
+      document.getElementById('edit-nama-prodi').value = config.nama_prodi || defaultConfig.nama_prodi;
+      document.getElementById('edit-jabatan').value = config.jabatan || defaultConfig.jabatan;
+      document.getElementById('edit-email').value = config.email || '';
+      document.getElementById('edit-telepon').value = config.telepon || '';
+      
+      // Load photo if exists
+      if (config.profile_photo) {
+        profilePhotoData = config.profile_photo;
+        updateProfilePhotoDisplay(config.profile_photo);
+      }
+    }
+
+    // Update photo display
+    function updateProfilePhotoDisplay(photoData) {
+      const preview = document.getElementById('profile-photo-preview');
+      const removeBtn = document.getElementById('remove-photo-btn');
+      
+      if (photoData) {
+        preview.innerHTML = `<img src="${photoData}" alt="Profile Photo">`;
+        removeBtn.style.display = 'flex';
+      } else {
+        preview.innerHTML = '<i class="bi bi-person-circle"></i>';
+        removeBtn.style.display = 'none';
+      }
+
+      // Update sidebar profile image
+      const sidebarProfileImage = document.querySelector('.profile-image');
+      if (photoData) {
+        sidebarProfileImage.innerHTML = `<img src="${photoData}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+      } else {
+        sidebarProfileImage.innerHTML = '<i class="bi bi-person-circle"></i>';
+      }
+    }
+
+    // Upload photo
+    document.getElementById('upload-photo-btn').addEventListener('click', function() {
+      document.getElementById('profile-photo-input').click();
+    });
+
+    document.getElementById('profile-photo-input').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          profilePhotoData = event.target.result;
+          updateProfilePhotoDisplay(profilePhotoData);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Remove photo
+    document.getElementById('remove-photo-btn').addEventListener('click', function() {
+      profilePhotoData = null;
+      updateProfilePhotoDisplay(null);
+    });
+
+    // Save profile
+    document.getElementById('profile-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const namaProdi = document.getElementById('edit-nama-prodi').value;
+      const jabatan = document.getElementById('edit-jabatan').value;
+      const email = document.getElementById('edit-email').value;
+      const telepon = document.getElementById('edit-telepon').value;
+
+      if (window.elementSdk) {
+        window.elementSdk.setConfig({
+          nama_prodi: namaProdi,
+          jabatan: jabatan,
+          email: email,
+          telepon: telepon,
+          profile_photo: profilePhotoData
+        });
+      }
+
+      // Show success message
+      const successMessage = document.getElementById('profile-success-message');
+      successMessage.style.display = 'flex';
+      setTimeout(() => {
+        successMessage.style.display = 'none';
+      }, 3000);
+    });
+
+    // Cancel profile edit
+    document.getElementById('cancel-profile-btn').addEventListener('click', function() {
+      loadProfileData();
+      document.getElementById('profile-success-message').style.display = 'none';
+    });
+
+    // Load profile data when profile page is accessed
+    document.querySelector('.nav-item[data-page="profil"]').addEventListener('click', function() {
+      loadProfileData();
+    });
+
+    // Laporan Page Functionality
+    const laporanData = [
+      { id: 1, nama: "Dr. Ahmad Wijaya, S.T., M.Kom", jabatan: "Ketua Program Studi", status: "completed", tanggal: "15 Januari 2024" },
+      { id: 2, nama: "Dr. Siti Nurhaliza, S.Kom., M.T.", jabatan: "Sekretaris Program Studi", status: "completed", tanggal: "16 Januari 2024" },
+      { id: 3, nama: "Budi Santoso, S.Kom., M.Cs.", jabatan: "Dosen Tetap", status: "pending", tanggal: "-" },
+      { id: 4, nama: "Dr. Rina Kartika, M.Kom", jabatan: "Dosen Tetap", status: "completed", tanggal: "14 Januari 2024" },
+      { id: 5, nama: "Agus Prasetyo, S.T., M.T.", jabatan: "Dosen Tetap", status: "pending", tanggal: "-" },
+      { id: 6, nama: "Maya Kusuma, S.Kom., M.Kom", jabatan: "Dosen Tetap", status: "completed", tanggal: "17 Januari 2024" },
+      { id: 7, nama: "Dedi Kurniawan, S.Kom., M.Sc.", jabatan: "Dosen Tetap", status: "pending", tanggal: "-" },
+      { id: 8, nama: "Lina Marlina, S.T., M.Kom", jabatan: "Tenaga Kependidikan", status: "completed", tanggal: "15 Januari 2024" }
+    ];
+
+    function loadLaporanData() {
+      const tableBody = document.getElementById('laporan-table-body');
+      const countCompleted = document.getElementById('count-completed');
+      const countPending = document.getElementById('count-pending');
+
+      const completed = laporanData.filter(item => item.status === 'completed').length;
+      const pending = laporanData.filter(item => item.status === 'pending').length;
+
+      countCompleted.textContent = completed;
+      countPending.textContent = pending;
+
+      let tableHTML = '';
+      laporanData.forEach(item => {
+        const statusBadge = item.status === 'completed' 
+          ? '<span style="background: #c6f6d5; color: #22543d; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px;"><i class="bi bi-check-circle-fill"></i> Selesai</span>'
+          : '<span style="background: #fed7d7; color: #c53030; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px;"><i class="bi bi-x-circle-fill"></i> Belum</span>';
+        
+        const actionButton = item.status === 'pending'
+          ? '<button onclick="sendReminder(' + item.id + ')" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 6px;"><i class="bi bi-bell-fill"></i> Kirim Pengingat</button>'
+          : '<button style="background: #e2e8f0; color: #718096; border: none; padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: not-allowed; display: inline-flex; align-items: center; gap: 6px;"><i class="bi bi-check-circle"></i> Sudah Mengisi</button>';
+
+        tableHTML += `
+          <tr style="border-bottom: 1px solid #e2e8f0; transition: background 0.2s ease;" onmouseover="this.style.background='#f7fafc'" onmouseout="this.style.background='white'">
+            <td style="padding: 15px 20px; color: #4a5568; font-size: 14px;">${item.id}</td>
+            <td style="padding: 15px 20px; color: #2d3748; font-size: 14px; font-weight: 500;">${item.nama}</td>
+            <td style="padding: 15px 20px; color: #4a5568; font-size: 14px;">${item.jabatan}</td>
+            <td style="padding: 15px 20px; text-align: center;">${statusBadge}</td>
+            <td style="padding: 15px 20px; color: #4a5568; font-size: 14px;">${item.tanggal}</td>
+            <td style="padding: 15px 20px; text-align: center;">${actionButton}</td>
+          </tr>
+        `;
+      });
+
+      tableBody.innerHTML = tableHTML;
+    }
+
+    // Send reminder function
+    window.sendReminder = function(id) {
+      const item = laporanData.find(data => data.id === id);
+      if (item) {
+        // Create and show toast message
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+          color: white;
+          padding: 16px 24px;
+          border-radius: 8px;
+          box-shadow: 0 4px 20px rgba(72, 187, 120, 0.4);
+          z-index: 9999;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          font-size: 14px;
+          font-weight: 500;
+          animation: slideInRight 0.3s ease;
+        `;
+        toast.innerHTML = `
+          <i class="bi bi-check-circle-fill" style="font-size: 20px;"></i>
+          <span>Pengingat berhasil dikirim ke ${item.nama}</span>
+        `;
+
+        document.body.appendChild(toast);
+
+        // Remove toast after 3 seconds
+        setTimeout(() => {
+          toast.style.animation = 'slideOutRight 0.3s ease';
+          setTimeout(() => {
+            document.body.removeChild(toast);
+          }, 300);
+        }, 3000);
+      }
+    };
+
+    // Load laporan data when laporan page is accessed
+    document.querySelector('.nav-item[data-page="laporan"]').addEventListener('click', function() {
+      loadLaporanData();
+    });
+
+    // Add animation keyframes
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideInRight {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      @keyframes slideOutRight {
+        from {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Change Code Functionality
+    const changeCodeForm = document.getElementById('change-code-form');
+    const currentCodeInput = document.getElementById('current-code');
+    const newCodeInput = document.getElementById('new-code');
+    const confirmCodeInput = document.getElementById('confirm-code');
+    const codeErrorMessage = document.getElementById('code-error-message');
+    const codeErrorText = document.getElementById('code-error-text');
+    const codeSuccessMessage = document.getElementById('code-success-message');
+    const cancelCodeBtn = document.getElementById('cancel-code-btn');
+
+    changeCodeForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const currentCode = currentCodeInput.value.trim();
+      const newCode = newCodeInput.value.trim();
+      const confirmCode = confirmCodeInput.value.trim();
+
+      // Hide previous messages
+      codeErrorMessage.style.display = 'none';
+      codeSuccessMessage.style.display = 'none';
+
+      // Validation
+      if (currentCode !== CORRECT_CODE) {
+        codeErrorText.textContent = 'Kode akses saat ini salah!';
+        codeErrorMessage.style.display = 'flex';
+        currentCodeInput.focus();
+        return;
+      }
+
+      if (newCode.length < 6) {
+        codeErrorText.textContent = 'Kode akses baru harus 6 karakter!';
+        codeErrorMessage.style.display = 'flex';
+        newCodeInput.focus();
+        return;
+      }
+
+      if (newCode !== confirmCode) {
+        codeErrorText.textContent = 'Konfirmasi kode tidak cocok!';
+        codeErrorMessage.style.display = 'flex';
+        confirmCodeInput.focus();
+        return;
+      }
+
+      if (newCode === currentCode) {
+        codeErrorText.textContent = 'Kode baru harus berbeda dari kode lama!';
+        codeErrorMessage.style.display = 'flex';
+        newCodeInput.focus();
+        return;
+      }
+
+      // Update code
+      CORRECT_CODE = newCode;
+      
+      // Show success message
+      codeSuccessMessage.style.display = 'flex';
+      
+      // Reset form
+      changeCodeForm.reset();
+
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        codeSuccessMessage.style.display = 'none';
+      }, 3000);
+    });
+
+    cancelCodeBtn.addEventListener('click', function() {
+      changeCodeForm.reset();
+      codeErrorMessage.style.display = 'none';
+      codeSuccessMessage.style.display = 'none';
+    });
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b48c4671314fdce',t:'MTc2NjgzNzk3Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
