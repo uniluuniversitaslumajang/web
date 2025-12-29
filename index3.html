@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="id" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IKU Universitas Lumajang</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #f97316 0%, #eab308 50%, #3b82f6 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .gradient-bg::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      animation: float 20s infinite ease-in-out;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      50% { transform: translate(-20px, 20px) rotate(180deg); }
+    }
+    
+    .card-shadow {
+      box-shadow: 0 20px 60px rgba(249, 115, 22, 0.15);
+      border: 1px solid rgba(249, 115, 22, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .card-shadow:hover {
+      box-shadow: 0 25px 70px rgba(249, 115, 22, 0.2);
+      transform: translateY(-2px);
+    }
+    
+    .sidebar-transition {
+      transition: all 0.3s ease-in-out;
+      border-right: 2px solid rgba(249, 115, 22, 0.1);
+    }
+    
+    .menu-item {
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .menu-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 3px;
+      background: linear-gradient(135deg, #f97316 0%, #eab308 100%);
+      transform: scaleY(0);
+      transition: transform 0.3s ease;
+    }
+    
+    .menu-item:hover {
+      transform: translateX(8px);
+      background-color: rgba(249, 115, 22, 0.05);
+    }
+    
+    .menu-item:hover::before {
+      transform: scaleY(1);
+    }
+    
+    .menu-item.active {
+      background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+    }
+    
+    .form-container {
+      min-height: 600px;
+    }
+    
+    .stat-card {
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.05) 0%, rgba(234, 179, 8, 0.05) 100%);
+      border-left: 4px solid;
+      transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(249, 115, 22, 0.15);
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.6s ease-out;
+    }
+    
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .slide-in {
+      animation: slideIn 0.5s ease-out;
+    }
+
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top: 3px solid white;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .input-focus:focus {
+      border-color: #f97316;
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+    }
+    
+    .btn-gradient {
+      background: linear-gradient(135deg, #f97316 0%, #eab308 100%);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-gradient::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s ease;
+    }
+    
+    .btn-gradient:hover::before {
+      left: 100%;
+    }
+    
+    .btn-gradient:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(249, 115, 22, 0.4);
+    }
+    
+    @media (max-width: 768px) {
+      .sidebar-transition {
+        position: fixed;
+        left: -100%;
+        top: 0;
+        height: 100%;
+        z-index: 1000;
+      }
+      
+      .sidebar-transition.open {
+        left: 0;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div id="app" class="h-full w-full overflow-auto"></div>
+  <script>
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRe_YXF15b2KuwKbqJz0-noQV1S0M_J990bq9bjG5w4uj9K4dyVMbuzWNX3BJS4xdkkWAS5c99bcoh6/pub?gid=0&single=true&output=csv';
+    const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSc1zmT00bvHjoYa1odQmibzUGnbEY4-jOwEPVlok-Uy5STioQ/viewform';
+    
+    let userData = null;
+    let institutionData = [];
+    let currentPage = 'iku';
+
+    const defaultConfig = {
+      primary_color: '#f97316',
+      secondary_color: '#eab308',
+      background_color: '#eff6ff',
+      text_color: '#1e3a8a',
+      surface_color: '#ffffff',
+      app_title: 'IKU UNILU',
+      login_title: 'Selamat Datang',
+      login_subtitle: 'Masukkan kredensial Anda untuk melanjutkan'
+    };
+
+    async function onConfigChange(config) {
+      const primaryColor = config.primary_color || defaultConfig.primary_color;
+      const secondaryColor = config.secondary_color || defaultConfig.secondary_color;
+      const backgroundColor = config.background_color || defaultConfig.background_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const surfaceColor = config.surface_color || defaultConfig.surface_color;
+      const appTitle = config.app_title || defaultConfig.app_title;
+      const loginTitle = config.login_title || defaultConfig.login_title;
+      const loginSubtitle = config.login_subtitle || defaultConfig.login_subtitle;
+
+      document.body.style.backgroundColor = backgroundColor;
+      document.body.style.color = textColor;
+
+      const appTitleElements = document.querySelectorAll('.app-title');
+      appTitleElements.forEach(el => el.textContent = appTitle);
+
+      const loginTitleElement = document.getElementById('login-title');
+      if (loginTitleElement) loginTitleElement.textContent = loginTitle;
+
+      const loginSubtitleElement = document.getElementById('login-subtitle');
+      if (loginSubtitleElement) loginSubtitleElement.textContent = loginSubtitle;
+
+      const gradientBg = document.querySelector('.gradient-bg');
+      if (gradientBg) {
+        gradientBg.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`;
+      }
+
+      const cards = document.querySelectorAll('.card-shadow');
+      cards.forEach(card => card.style.backgroundColor = surfaceColor);
+
+      const buttons = document.querySelectorAll('.btn-primary');
+      buttons.forEach(btn => {
+        btn.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`;
+      });
+
+      const menuItems = document.querySelectorAll('.menu-item');
+      menuItems.forEach(item => {
+        if (item.classList.contains('active')) {
+          item.style.backgroundColor = primaryColor;
+        }
+      });
+    }
+
+    async function loadInstitutionData() {
+      try {
+        const response = await fetch(CSV_URL);
+        const csvText = await response.text();
+        const lines = csvText.split('\n');
+        const headers = lines[0].split(',').map(h => h.trim());
+        
+        institutionData = lines.slice(1)
+          .filter(line => line.trim())
+          .map(line => {
+            const values = line.split(',').map(v => v.trim());
+            const obj = {};
+            headers.forEach((header, index) => {
+              obj[header] = values[index] || '';
+            });
+            return obj;
+          });
+        
+        return true;
+      } catch (error) {
+        console.error('Error loading data:', error);
+        return false;
+      }
+    }
+
+    function validateLogin(kodePT, kodeProdi) {
+      return institutionData.find(item => 
+        item.Kode_PT === kodePT && item.Kode_Prodi === kodeProdi
+      );
+    }
+
+    function renderLogin() {
+      const config = window.elementSdk?.config || defaultConfig;
+      const primaryColor = config.primary_color || defaultConfig.primary_color;
+      const secondaryColor = config.secondary_color || defaultConfig.secondary_color;
+      const surfaceColor = config.surface_color || defaultConfig.surface_color;
+      const appTitle = config.app_title || defaultConfig.app_title;
+      const loginTitle = config.login_title || defaultConfig.login_title;
+      const loginSubtitle = config.login_subtitle || defaultConfig.login_subtitle;
+
+      return `
+        <div class="h-full w-full flex items-center justify-center gradient-bg" style="background: linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 50%, #3b82f6 100%);">
+          <div class="w-full max-w-md mx-4 fade-in">
+            <div class="card-shadow rounded-3xl p-10" style="background-color: ${surfaceColor};">
+              <div class="text-center mb-10">
+                <div class="w-24 h-24 mx-auto mb-6 rounded-3xl flex items-center justify-center shadow-xl" style="background: linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%);">
+                  <span class="text-5xl">📊</span>
+                </div>
+                <h1 class="app-title text-4xl font-bold mb-3 bg-clip-text text-transparent" style="background-image: linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%);">${appTitle}</h1>
+                <div class="w-20 h-1 mx-auto mb-4 rounded-full" style="background: linear-gradient(90deg, ${primaryColor} 0%, ${secondaryColor} 100%);"></div>
+                <p id="login-title" class="text-2xl font-bold mb-2" style="color: ${primaryColor};">${loginTitle}</p>
+                <p id="login-subtitle" class="text-base" style="color: ${config.text_color || defaultConfig.text_color}; opacity: 0.7;">${loginSubtitle}</p>
+              </div>
+              
+              <form id="login-form" class="space-y-6">
+                <div class="slide-in" style="animation-delay: 0.1s;">
+                  <label for="kode-pt" class="block text-sm font-semibold mb-3 flex items-center" style="color: ${config.text_color || defaultConfig.text_color};">
+                    <span class="mr-2">🏛️</span> Kode PT
+                  </label>
+                  <input 
+                    type="text" 
+                    id="kode-pt" 
+                    required
+                    autocomplete="off"
+                    class="input-focus w-full px-5 py-4 border-2 rounded-xl focus:outline-none transition-all text-lg"
+                    style="border-color: #e5e7eb; color: ${config.text_color || defaultConfig.text_color}; background-color: ${surfaceColor};"
+                    placeholder="Masukkan Kode PT"
+                  >
+                </div>
+                
+                <div class="slide-in" style="animation-delay: 0.2s;">
+                  <label for="kode-prodi" class="block text-sm font-semibold mb-3 flex items-center" style="color: ${config.text_color || defaultConfig.text_color};">
+                    <span class="mr-2">🎓</span> Kode Prodi
+                  </label>
+                  <input 
+                    type="text" 
+                    id="kode-prodi" 
+                    required
+                    autocomplete="off"
+                    class="input-focus w-full px-5 py-4 border-2 rounded-xl focus:outline-none transition-all text-lg"
+                    style="border-color: #e5e7eb; color: ${config.text_color || defaultConfig.text_color}; background-color: ${surfaceColor};"
+                    placeholder="Masukkan Kode Prodi"
+                  >
+                </div>
+                
+                <div id="error-message" class="hidden p-4 rounded-xl text-sm font-medium border-2" style="background-color: #fef2f2; color: #dc2626; border-color: #fecaca;">
+                  <div class="flex items-center">
+                    <span class="mr-2">⚠️</span>
+                    <span id="error-text"></span>
+                  </div>
+                </div>
+                
+                <button 
+                  type="submit" 
+                  id="login-btn"
+                  class="btn-gradient w-full py-4 rounded-xl text-white font-bold text-lg shadow-lg slide-in"
+                  style="background: linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%); animation-delay: 0.3s;"
+                >
+                  Masuk ke Sistem
+                </button>
+              </form>
+              
+              <div class="mt-8 text-center">
+                <p class="text-sm" style="color: ${config.text_color || defaultConfig.text_color}; opacity: 0.6;">
+                  Butuh bantuan? Hubungi administrator
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderDashboard() {
+      const config = window.elementSdk?.config || defaultConfig;
+      const primaryColor = config.primary_color || defaultConfig.primary_color;
+      const secondaryColor = config.secondary_color || defaultConfig.secondary_color;
+      const surfaceColor = config.surface_color || defaultConfig.surface_color;
+      const backgroundColor = config.background_color || defaultConfig.background_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const appTitle = config.app_title || defaultConfig.app_title;
+
+      const pages = {
+        iku: {
+          title: 'Pengisian Form IKU',
+          content: `
+            <div class="mb-6">
+              <div class="w-full px-8 py-4 rounded-full mb-4" style="background-color: #3b82f6;">
+                <h2 class="text-2xl font-bold" style="color: white;">Indikator Kinerja Utama</h2>
+              </div>
+              <p class="text-sm" style="color: ${textColor}; opacity: 0.7;">Silakan isi formulir IKU di bawah ini</p>
+            </div>
+            <div class="card-shadow rounded-xl overflow-hidden form-container" style="background-color: ${surfaceColor};">
+              <iframe 
+                src="${GOOGLE_FORM_URL}?embedded=true" 
+                width="100%" 
+                frameborder="0" 
+                marginheight="0" 
+                marginwidth="0"
+                style="min-height: 600px;"
+              >Memuat…</iframe>
+            </div>
+          `
+        },
+        dashboard: {
+          title: 'Dashboard',
+          content: `
+            <div class="mb-6">
+              <div class="w-full px-8 py-4 rounded-full mb-4" style="background-color: #3b82f6;">
+                <h2 class="text-2xl font-bold" style="color: white;">Dashboard</h2>
+              </div>
+              <p class="text-sm" style="color: ${textColor}; opacity: 0.7;">Ringkasan data dan statistik</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              <div class="stat-card card-shadow rounded-2xl p-8 fade-in" style="background: linear-gradient(135deg, rgba(249, 115, 22, 0.08) 0%, rgba(251, 146, 60, 0.08) 100%); background-color: ${surfaceColor}; border-left-color: ${primaryColor}; animation-delay: 0.1s;">
+                <div class="flex items-center justify-between mb-6">
+                  <div class="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg" style="background: linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%);">
+                    <span class="text-3xl">📝</span>
+                  </div>
+                  <span class="text-3xl font-bold" style="color: ${primaryColor};">-</span>
+                </div>
+                <h3 class="font-bold text-lg mb-2" style="color: ${textColor};">Total Formulir</h3>
+                <p class="text-sm" style="color: ${textColor}; opacity: 0.7;">Formulir terisi</p>
+              </div>
+              
+              <div class="stat-card card-shadow rounded-2xl p-8 fade-in" style="background: linear-gradient(135deg, rgba(234, 179, 8, 0.08) 0%, rgba(250, 204, 21, 0.08) 100%); background-color: ${surfaceColor}; border-left-color: ${secondaryColor}; animation-delay: 0.2s;">
+                <div class="flex items-center justify-between mb-6">
+                  <div class="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg" style="background: linear-gradient(135deg, ${secondaryColor} 0%, #fbbf24 100%);">
+                    <span class="text-3xl">✅</span>
+                  </div>
+                  <span class="text-3xl font-bold" style="color: ${secondaryColor};">-</span>
+                </div>
+                <h3 class="font-bold text-lg mb-2" style="color: ${textColor};">Status Lengkap</h3>
+                <p class="text-sm" style="color: ${textColor}; opacity: 0.7;">Data terverifikasi</p>
+              </div>
+              
+              <div class="stat-card card-shadow rounded-2xl p-8 fade-in" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(96, 165, 250, 0.08) 100%); background-color: ${surfaceColor}; border-left-color: #3b82f6; animation-delay: 0.3s;">
+                <div class="flex items-center justify-between mb-6">
+                  <div class="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg" style="background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);">
+                    <span class="text-3xl">⏰</span>
+                  </div>
+                  <span class="text-3xl font-bold" style="color: #3b82f6;">-</span>
+                </div>
+                <h3 class="font-bold text-lg mb-2" style="color: ${textColor};">Pending</h3>
+                <p class="text-sm" style="color: ${textColor}; opacity: 0.7;">Menunggu review</p>
+              </div>
+            </div>
+            
+            <div class="card-shadow rounded-2xl p-8 fade-in" style="background-color: ${surfaceColor}; animation-delay: 0.4s;">
+              <div class="flex items-center mb-6">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center mr-4" style="background: linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%);">
+                  <span class="text-2xl">📊</span>
+                </div>
+                <h3 class="text-2xl font-bold" style="color: ${textColor};">Aktivitas Terkini</h3>
+              </div>
+              <div class="space-y-5">
+                <div class="flex items-start p-5 rounded-xl transition-all hover:shadow-md" style="background: linear-gradient(135deg, rgba(249, 115, 22, 0.05) 0%, rgba(234, 179, 8, 0.05) 100%);">
+                  <div class="w-3 h-3 rounded-full mt-2 mr-4 shadow-sm" style="background: linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%);"></div>
+                  <div>
+                    <p class="font-semibold text-lg mb-1" style="color: ${textColor};">Dashboard dalam pengembangan</p>
+                    <p class="text-sm" style="color: ${textColor}; opacity: 0.7;">Fitur statistik dan grafik akan segera tersedia</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `
+        },
+        profil: {
+          title: 'Profil',
+          content: `
+            <div class="mb-6">
+              <div class="w-full px-8 py-4 rounded-full mb-4" style="background-color: #3b82f6;">
+                <h2 class="text-2xl font-bold" style="color: white;">Profil Institusi</h2>
+              </div>
+              <p class="text-sm" style="color: ${textColor}; opacity: 0.7;">Informasi lengkap institusi Anda</p>
+            </div>
+            <div class="card-shadow rounded-2xl p-10 fade-in" style="background-color: ${surfaceColor};">
+              <div class="flex flex-col md:flex-row items-center mb-10 pb-8 border-b-2" style="border-color: ${backgroundColor};">
+                <div class="w-28 h-28 rounded-3xl flex items-center justify-center mb-6 md:mb-0 md:mr-8 shadow-xl" style="background: linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 50%, #3b82f6 100%);">
+                  <span class="text-6xl">🏛️</span>
+                </div>
+                <div class="text-center md:text-left">
+                  <h3 class="text-3xl font-bold mb-2" style="color: ${textColor};">${userData?.Name || '-'}</h3>
+                  <div class="flex flex-wrap justify-center md:justify-start gap-3">
+                    <span class="px-4 py-2 rounded-xl text-sm font-semibold text-white shadow-md" style="background: linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%);">
+                      ${userData?.Kode_PT || '-'}
+                    </span>
+                    <span class="px-4 py-2 rounded-xl text-sm font-semibold text-white shadow-md" style="background: linear-gradient(135deg, ${secondaryColor} 0%, #fbbf24 100%);">
+                      ${userData?.Kode_Prodi || '-'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="p-6 rounded-2xl border-2 transition-all hover:shadow-lg slide-in" style="background: linear-gradient(135deg, rgba(249, 115, 22, 0.05) 0%, rgba(251, 146, 60, 0.05) 100%); border-color: rgba(249, 115, 22, 0.2); animation-delay: 0.1s;">
+                  <div class="flex items-center mb-3">
+                    <span class="text-2xl mr-3">🏛️</span>
+                    <p class="text-sm font-semibold" style="color: ${textColor}; opacity: 0.7;">Kode PT</p>
+                  </div>
+                  <p class="font-bold text-xl" style="color: ${textColor};">${userData?.Kode_PT || '-'}</p>
+                </div>
+                
+                <div class="p-6 rounded-2xl border-2 transition-all hover:shadow-lg slide-in" style="background: linear-gradient(135deg, rgba(234, 179, 8, 0.05) 0%, rgba(250, 204, 21, 0.05) 100%); border-color: rgba(234, 179, 8, 0.2); animation-delay: 0.2s;">
+                  <div class="flex items-center mb-3">
+                    <span class="text-2xl mr-3">🎓</span>
+                    <p class="text-sm font-semibold" style="color: ${textColor}; opacity: 0.7;">Kode Prodi</p>
+                  </div>
+                  <p class="font-bold text-xl" style="color: ${textColor};">${userData?.Kode_Prodi || '-'}</p>
+                </div>
+                
+                <div class="p-6 rounded-2xl border-2 md:col-span-2 transition-all hover:shadow-lg slide-in" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(96, 165, 250, 0.05) 100%); border-color: rgba(59, 130, 246, 0.2); animation-delay: 0.3s;">
+                  <div class="flex items-center mb-3">
+                    <span class="text-2xl mr-3">📋</span>
+                    <p class="text-sm font-semibold" style="color: ${textColor}; opacity: 0.7;">Nama Institusi</p>
+                  </div>
+                  <p class="font-bold text-xl" style="color: ${textColor};">${userData?.Name || '-'}</p>
+                </div>
+              </div>
+            </div>
+          `
+        },
+        pengaturan: {
+          title: 'Pengaturan',
+          content: `
+            <div class="mb-6">
+              <div class="w-full px-8 py-4 rounded-full mb-4" style="background-color: #3b82f6;">
+                <h2 class="text-2xl font-bold" style="color: white;">Pengaturan</h2>
+              </div>
+              <p class="text-sm" style="color: ${textColor}; opacity: 0.7;">Kelola preferensi aplikasi Anda</p>
+            </div>
+            <div class="card-shadow rounded-2xl p-8 fade-in" style="background-color: ${surfaceColor};">
+              <div class="space-y-4">
+                <div class="flex items-center justify-between p-6 rounded-xl border-2 transition-all hover:shadow-lg cursor-pointer slide-in" style="background: linear-gradient(135deg, rgba(249, 115, 22, 0.05) 0%, rgba(251, 146, 60, 0.05) 100%); border-color: rgba(249, 115, 22, 0.1); animation-delay: 0.1s;">
+                  <div class="flex items-center">
+                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center mr-5 shadow-md" style="background: linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%);">
+                      <span class="text-3xl">🔔</span>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-lg mb-1" style="color: ${textColor};">Notifikasi</h3>
+                      <p class="text-sm" style="color: ${textColor}; opacity: 0.7;">Kelola pengaturan notifikasi</p>
+                    </div>
+                  </div>
+                  <span style="color: ${primaryColor};">›</span>
+                </div>
+                
+                <div class="flex items-center justify-between p-6 rounded-xl border-2 transition-all hover:shadow-lg cursor-pointer slide-in" style="background: linear-gradient(135deg, rgba(234, 179, 8, 0.05) 0%, rgba(250, 204, 21, 0.05) 100%); border-color: rgba(234, 179, 8, 0.1); animation-delay: 0.2s;">
+                  <div class="flex items-center">
+                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center mr-5 shadow-md" style="background: linear-gradient(135deg, ${secondaryColor} 0%, #fbbf24 100%);">
+                      <span class="text-3xl">🔒</span>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-lg mb-1" style="color: ${textColor};">Keamanan</h3>
+                      <p class="text-sm" style="color: ${textColor}; opacity: 0.7;">Pengaturan keamanan akun</p>
+                    </div>
+                  </div>
+                  <span style="color: ${secondaryColor};">›</span>
+                </div>
+                
+                <div class="flex items-center justify-between p-6 rounded-xl border-2 transition-all hover:shadow-lg cursor-pointer slide-in" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(96, 165, 250, 0.05) 100%); border-color: rgba(59, 130, 246, 0.1); animation-delay: 0.3s;">
+                  <div class="flex items-center">
+                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center mr-5 shadow-md" style="background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);">
+                      <span class="text-3xl">🌐</span>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-lg mb-1" style="color: ${textColor};">Bahasa</h3>
+                      <p class="text-sm" style="color: ${textColor}; opacity: 0.7;">Indonesia</p>
+                    </div>
+                  </div>
+                  <span style="color: #3b82f6;">›</span>
+                </div>
+                
+                <div class="mt-10 pt-6 border-t-2" style="border-color: ${backgroundColor};">
+                  <button 
+                    id="logout-btn"
+                    class="btn-gradient w-full py-5 rounded-xl font-bold text-lg shadow-xl slide-in"
+                    style="background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); color: white; animation-delay: 0.4s;"
+                  >
+                    Keluar dari Sistem
+                  </button>
+                </div>
+              </div>
+            </div>
+          `
+        }
+      };
+
+      const currentPageData = pages[currentPage];
+
+      return `
+        <div class="h-full w-full flex" style="background-color: ${backgroundColor};">
+          <!-- Sidebar -->
+          <div class="w-72 sidebar-transition card-shadow" style="background: linear-gradient(180deg, ${surfaceColor} 0%, ${surfaceColor} 100%);">
+            <div class="p-8 border-b-2" style="border-color: ${backgroundColor};">
+              <div class="flex items-center">
+                <div class="w-14 h-14 rounded-2xl flex items-center justify-center mr-4 shadow-lg" style="background: linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 50%, #3b82f6 100%);">
+                  <span class="text-2xl">📊</span>
+                </div>
+                <div>
+                  <h1 class="app-title font-bold text-xl leading-tight" style="color: ${textColor};">${appTitle}</h1>
+                  <p class="text-xs mt-1" style="color: ${textColor}; opacity: 0.6;">Sistem IKU</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="p-6">
+              <div class="mb-8">
+                <div class="px-4 py-3 mb-4 rounded-full" style="background-color: #3b82f6;">
+                  <p class="text-xs font-bold tracking-wider text-center" style="color: white;">MENU UTAMA</p>
+                </div>
+                <nav class="space-y-2">
+                  <a href="#" data-page="iku" class="menu-item flex items-center px-4 py-4 rounded-xl ${currentPage === 'iku' ? 'active' : ''}" style="${currentPage === 'iku' ? `background: linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%); color: white;` : `color: ${textColor};`}">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center mr-4" style="${currentPage === 'iku' ? 'background: rgba(255,255,255,0.2);' : `background: linear-gradient(135deg, rgba(249, 115, 22, 0.1) 0%, rgba(234, 179, 8, 0.1) 100%);`}">
+                      <span class="text-xl">📝</span>
+                    </div>
+                    <span class="font-semibold">Pengisian IKU</span>
+                  </a>
+                  
+                  <a href="#" data-page="dashboard" class="menu-item flex items-center px-4 py-4 rounded-xl ${currentPage === 'dashboard' ? 'active' : ''}" style="${currentPage === 'dashboard' ? `background: linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%); color: white;` : `color: ${textColor};`}">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center mr-4" style="${currentPage === 'dashboard' ? 'background: rgba(255,255,255,0.2);' : `background: linear-gradient(135deg, rgba(234, 179, 8, 0.1) 0%, rgba(250, 204, 21, 0.1) 100%);`}">
+                      <span class="text-xl">📊</span>
+                    </div>
+                    <span class="font-semibold">Dashboard</span>
+                  </a>
+                  
+                  <a href="#" data-page="profil" class="menu-item flex items-center px-4 py-4 rounded-xl ${currentPage === 'profil' ? 'active' : ''}" style="${currentPage === 'profil' ? `background: linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%); color: white;` : `color: ${textColor};`}">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center mr-4" style="${currentPage === 'profil' ? 'background: rgba(255,255,255,0.2);' : `background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(96, 165, 250, 0.1) 100%);`}">
+                      <span class="text-xl">👤</span>
+                    </div>
+                    <span class="font-semibold">Profil</span>
+                  </a>
+                  
+                  <a href="#" data-page="pengaturan" class="menu-item flex items-center px-4 py-4 rounded-xl ${currentPage === 'pengaturan' ? 'active' : ''}" style="${currentPage === 'pengaturan' ? `background: linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%); color: white;` : `color: ${textColor};`}">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center mr-4" style="${currentPage === 'pengaturan' ? 'background: rgba(255,255,255,0.2);' : `background: linear-gradient(135deg, rgba(249, 115, 22, 0.1) 0%, rgba(251, 146, 60, 0.1) 100%);`}">
+                      <span class="text-xl">⚙️</span>
+                    </div>
+                    <span class="font-semibold">Pengaturan</span>
+                  </a>
+                </nav>
+              </div>
+            </div>
+            
+            <div class="absolute bottom-0 w-72 p-6 border-t-2" style="border-color: ${backgroundColor};">
+              <div class="flex items-center p-4 rounded-xl mb-4" style="background: linear-gradient(135deg, rgba(249, 115, 22, 0.05) 0%, rgba(234, 179, 8, 0.05) 100%);">
+                <div class="w-12 h-12 rounded-2xl flex items-center justify-center mr-4 shadow-md" style="background: linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%);">
+                  <span class="text-xl">🏛️</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="font-bold text-sm truncate" style="color: ${textColor};">${userData?.Name || 'User'}</p>
+                  <p class="text-xs truncate mt-1" style="color: ${textColor}; opacity: 0.6;">${userData?.Kode_Prodi || '-'}</p>
+                </div>
+              </div>
+              
+              <button 
+                id="sidebar-logout-btn"
+                class="w-full py-3 rounded-xl font-semibold text-sm shadow-lg flex items-center justify-center transition-all"
+                style="background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); color: white;"
+              >
+                <span class="mr-2">🚪</span>
+                Keluar
+              </button>
+            </div>
+          </div>
+          
+          <!-- Main Content -->
+          <div class="flex-1 overflow-auto">
+            <div class="p-10 fade-in">
+              ${currentPageData.content}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function attachLoginHandlers() {
+      const form = document.getElementById('login-form');
+      const errorDiv = document.getElementById('error-message');
+      const errorText = document.getElementById('error-text');
+      const loginBtn = document.getElementById('login-btn');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const kodePT = document.getElementById('kode-pt').value.trim();
+        const kodeProdi = document.getElementById('kode-prodi').value.trim();
+        
+        loginBtn.disabled = true;
+        loginBtn.innerHTML = '<div class="spinner mx-auto"></div>';
+        
+        setTimeout(() => {
+          const user = validateLogin(kodePT, kodeProdi);
+          
+          if (user) {
+            userData = user;
+            currentPage = 'iku';
+            render();
+          } else {
+            errorDiv.classList.remove('hidden');
+            errorText.textContent = 'Kode PT atau Kode Prodi tidak valid. Silakan coba lagi.';
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'Masuk';
+            
+            setTimeout(() => {
+              errorDiv.classList.add('hidden');
+            }, 3000);
+          }
+        }, 1000);
+      });
+    }
+
+    function attachDashboardHandlers() {
+      const menuItems = document.querySelectorAll('[data-page]');
+      menuItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+          e.preventDefault();
+          currentPage = item.dataset.page;
+          render();
+        });
+      });
+
+      const logoutBtn = document.getElementById('logout-btn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          userData = null;
+          currentPage = 'iku';
+          render();
+        });
+      }
+
+      const sidebarLogoutBtn = document.getElementById('sidebar-logout-btn');
+      if (sidebarLogoutBtn) {
+        sidebarLogoutBtn.addEventListener('click', () => {
+          userData = null;
+          currentPage = 'iku';
+          render();
+        });
+      }
+    }
+
+    function render() {
+      const app = document.getElementById('app');
+      
+      if (!userData) {
+        app.innerHTML = renderLogin();
+        attachLoginHandlers();
+      } else {
+        app.innerHTML = renderDashboard();
+        attachDashboardHandlers();
+      }
+    }
+
+    async function init() {
+      await loadInstitutionData();
+      
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange,
+          mapToCapabilities: (config) => ({
+            recolorables: [
+              {
+                get: () => config.primary_color || defaultConfig.primary_color,
+                set: (value) => {
+                  config.primary_color = value;
+                  window.elementSdk.setConfig({ primary_color: value });
+                }
+              },
+              {
+                get: () => config.secondary_color || defaultConfig.secondary_color,
+                set: (value) => {
+                  config.secondary_color = value;
+                  window.elementSdk.setConfig({ secondary_color: value });
+                }
+              },
+              {
+                get: () => config.background_color || defaultConfig.background_color,
+                set: (value) => {
+                  config.background_color = value;
+                  window.elementSdk.setConfig({ background_color: value });
+                }
+              },
+              {
+                get: () => config.text_color || defaultConfig.text_color,
+                set: (value) => {
+                  config.text_color = value;
+                  window.elementSdk.setConfig({ text_color: value });
+                }
+              },
+              {
+                get: () => config.surface_color || defaultConfig.surface_color,
+                set: (value) => {
+                  config.surface_color = value;
+                  window.elementSdk.setConfig({ surface_color: value });
+                }
+              }
+            ],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined
+          }),
+          mapToEditPanelValues: (config) => new Map([
+            ['app_title', config.app_title || defaultConfig.app_title],
+            ['login_title', config.login_title || defaultConfig.login_title],
+            ['login_subtitle', config.login_subtitle || defaultConfig.login_subtitle]
+          ])
+        });
+      }
+      
+      render();
+    }
+
+    init();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b56385b02e8d437',t:'MTc2Njk3OTA0MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
